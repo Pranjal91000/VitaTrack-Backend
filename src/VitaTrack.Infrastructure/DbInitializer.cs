@@ -4,25 +4,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using VitaTrack.Core.Entities;
 
-namespace VitaTrack.Infrastructure.Persistence;
+namespace VitaTrack.Infrastructure;
 
 public static class VitaTrackDbContextInitialiserExtensions
 {
     public static async Task InitialiseDatabaseAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var initialiser = scope.ServiceProvider.GetRequiredService<VitaTrackDbContextInitialiser>();
+        var initialiser = scope.ServiceProvider.GetRequiredService<DbInitializer>();
         await initialiser.InitialiseAsync();
         await initialiser.SeedAsync();
     }
 }
 
-public class VitaTrackDbContextInitialiser
+public class DbInitializer
 {
-    private readonly ILogger<VitaTrackDbContextInitialiser> _logger;
-    private readonly VitaTrackDbContext _context;
+    private readonly ILogger<DbInitializer> _logger;
+    private readonly AppDbContext _context;
 
-    public VitaTrackDbContextInitialiser(ILogger<VitaTrackDbContextInitialiser> logger, VitaTrackDbContext context)
+    public DbInitializer(ILogger<DbInitializer> logger, AppDbContext context)
     {
         _logger = logger;
         _context = context;

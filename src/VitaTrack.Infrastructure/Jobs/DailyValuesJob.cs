@@ -1,16 +1,15 @@
 using VitaTrack.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using VitaTrack.Infrastructure.Persistence;
 
 namespace VitaTrack.Infrastructure.Jobs;
 
 public class DailyValuesJob
 {
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
     private readonly ILogger<DailyValuesJob> _logger;
 
-    public DailyValuesJob(VitaTrackDbContext context, ILogger<DailyValuesJob> logger)
+    public DailyValuesJob(AppDbContext context, ILogger<DailyValuesJob> logger)
     {
         _context = context;
         _logger = logger;

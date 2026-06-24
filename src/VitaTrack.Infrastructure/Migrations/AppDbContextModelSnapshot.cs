@@ -3,21 +3,18 @@ using System;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VitaTrack.Infrastructure.Persistence;
+using VitaTrack.Infrastructure;
 
 #nullable disable
 
 namespace VitaTrack.Infrastructure.Migrations
 {
-    [DbContext(typeof(VitaTrackDbContext))]
-    [Migration("20260221154346_AddWorkoutManagement")]
-    partial class AddWorkoutManagement
+    [DbContext(typeof(AppDbContext))]
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,206 +22,6 @@ namespace VitaTrack.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.Activity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("Category")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Icon")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Activities");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.ActivityLog", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("ActivityId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<int>("DurationMinutes")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text");
-
-                    b.Property<string[]>("Tags")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
-
-                    b.HasIndex("UserId", "Date");
-
-                    b.ToTable("ActivityLogs");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.DevelopmentTopic", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("DevelopmentTopics");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.DsaProblem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("ConfidenceScore")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("HardnessLevel")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Link")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProblemHeading")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("RefPageNumber")
-                        .HasColumnType("text");
-
-                    b.Property<int>("RevisitCount")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("RevisitNeeded")
-                        .HasColumnType("boolean");
-
-                    b.Property<long?>("TaskId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("DsaProblems");
-                });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.Exercise", b =>
                 {
@@ -237,8 +34,14 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DemoMediaContentType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DemoMediaFileName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("DemoMediaId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Equipment")
                         .HasColumnType("text");
@@ -295,9 +98,6 @@ namespace VitaTrack.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
 
                     b.Property<decimal>("FatG")
                         .HasColumnType("numeric");
@@ -397,18 +197,14 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<long>("MealSlotId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Notes")
                         .HasColumnType("text");
@@ -421,7 +217,9 @@ namespace VitaTrack.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("MealSlotId");
+
+                    b.HasIndex("UserId", "Date");
 
                     b.ToTable("Meals");
                 });
@@ -436,9 +234,6 @@ namespace VitaTrack.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("FoodId")
                         .HasColumnType("bigint");
@@ -455,6 +250,9 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FoodId");
@@ -462,6 +260,40 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.HasIndex("MealId");
 
                     b.ToTable("MealFoods");
+                });
+
+            modelBuilder.Entity("VitaTrack.Core.Entities.MealSlot", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MealSlots");
                 });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.RefreshToken", b =>
@@ -477,9 +309,6 @@ namespace VitaTrack.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("CreatedByIp")
                         .HasColumnType("text");
@@ -527,9 +356,6 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
                     b.Property<decimal?>("DistanceKm")
                         .HasColumnType("numeric");
 
@@ -557,6 +383,9 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
                     b.Property<decimal?>("WeightKg")
                         .HasColumnType("numeric");
 
@@ -568,110 +397,6 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.HasIndex("WorkoutExerciseId");
 
                     b.ToTable("Sets");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.TaskLog", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("Completed")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<int>("DurationMinutes")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text");
-
-                    b.Property<long>("TaskId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("TaskLogs");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.TrackedTask", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("ActivityId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("Deadline")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Priority")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("RecurrencePattern")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
-
-                    b.HasIndex("ParentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TrackedTasks");
                 });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.User", b =>
@@ -690,9 +415,6 @@ namespace VitaTrack.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -719,12 +441,40 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
                     b.Property<decimal?>("WeightKg")
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("VitaTrack.Core.Entities.WeightTrack", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WeightTracks");
                 });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.Workout", b =>
@@ -737,9 +487,6 @@ namespace VitaTrack.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -786,9 +533,6 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("CreatedBy")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("ExerciseId")
                         .HasColumnType("bigint");
 
@@ -801,6 +545,9 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("WorkoutId")
                         .HasColumnType("bigint");
 
@@ -811,66 +558,6 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.HasIndex("WorkoutId");
 
                     b.ToTable("WorkoutExercises");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.Activity", b =>
-                {
-                    b.HasOne("VitaTrack.Core.Entities.Activity", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId");
-
-                    b.HasOne("VitaTrack.Core.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Parent");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.ActivityLog", b =>
-                {
-                    b.HasOne("VitaTrack.Core.Entities.Activity", "Activity")
-                        .WithMany()
-                        .HasForeignKey("ActivityId");
-
-                    b.HasOne("VitaTrack.Core.Entities.User", "User")
-                        .WithMany("ActivityLogs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Activity");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.DevelopmentTopic", b =>
-                {
-                    b.HasOne("VitaTrack.Core.Entities.User", "User")
-                        .WithMany("DevelopmentTopics")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.DsaProblem", b =>
-                {
-                    b.HasOne("VitaTrack.Core.Entities.TrackedTask", "Task")
-                        .WithMany()
-                        .HasForeignKey("TaskId");
-
-                    b.HasOne("VitaTrack.Core.Entities.User", "User")
-                        .WithMany("DsaProblems")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Task");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.Exercise", b =>
@@ -893,11 +580,19 @@ namespace VitaTrack.Infrastructure.Migrations
 
             modelBuilder.Entity("VitaTrack.Core.Entities.Meal", b =>
                 {
+                    b.HasOne("VitaTrack.Core.Entities.MealSlot", "MealSlot")
+                        .WithMany("Meals")
+                        .HasForeignKey("MealSlotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VitaTrack.Core.Entities.User", "User")
                         .WithMany("Meals")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("MealSlot");
 
                     b.Navigation("User");
                 });
@@ -921,6 +616,15 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Navigation("Meal");
                 });
 
+            modelBuilder.Entity("VitaTrack.Core.Entities.MealSlot", b =>
+                {
+                    b.HasOne("VitaTrack.Core.Entities.User", "User")
+                        .WithMany("MealSlots")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VitaTrack.Core.Entities.RefreshToken", b =>
                 {
                     b.HasOne("VitaTrack.Core.Entities.User", "User")
@@ -941,40 +645,6 @@ namespace VitaTrack.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkoutExercise");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.TaskLog", b =>
-                {
-                    b.HasOne("VitaTrack.Core.Entities.TrackedTask", "Task")
-                        .WithMany("TaskLogs")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Task");
-                });
-
-            modelBuilder.Entity("VitaTrack.Core.Entities.TrackedTask", b =>
-                {
-                    b.HasOne("VitaTrack.Core.Entities.Activity", "Activity")
-                        .WithMany()
-                        .HasForeignKey("ActivityId");
-
-                    b.HasOne("VitaTrack.Core.Entities.TrackedTask", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId");
-
-                    b.HasOne("VitaTrack.Core.Entities.User", "User")
-                        .WithMany("TrackedTasks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Activity");
-
-                    b.Navigation("Parent");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.Workout", b =>
@@ -1007,36 +677,23 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Navigation("Workout");
                 });
 
-            modelBuilder.Entity("VitaTrack.Core.Entities.Activity", b =>
-                {
-                    b.Navigation("Children");
-                });
-
             modelBuilder.Entity("VitaTrack.Core.Entities.Meal", b =>
                 {
                     b.Navigation("MealFoods");
                 });
 
-            modelBuilder.Entity("VitaTrack.Core.Entities.TrackedTask", b =>
+            modelBuilder.Entity("VitaTrack.Core.Entities.MealSlot", b =>
                 {
-                    b.Navigation("Children");
-
-                    b.Navigation("TaskLogs");
+                    b.Navigation("Meals");
                 });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.User", b =>
                 {
-                    b.Navigation("ActivityLogs");
-
-                    b.Navigation("DevelopmentTopics");
-
-                    b.Navigation("DsaProblems");
+                    b.Navigation("MealSlots");
 
                     b.Navigation("Meals");
 
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("TrackedTasks");
 
                     b.Navigation("Workouts");
                 });

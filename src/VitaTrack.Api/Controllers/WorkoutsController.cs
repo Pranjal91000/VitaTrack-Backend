@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VitaTrack.Api.Workouts.DTOs;
 using VitaTrack.Core.Entities;
-using VitaTrack.Infrastructure.Persistence;
+using VitaTrack.Infrastructure;
 
 namespace VitaTrack.Api.Controllers;
 
@@ -14,9 +14,9 @@ namespace VitaTrack.Api.Controllers;
 [Authorize]
 public class WorkoutsController : ControllerBase
 {
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
 
-    public WorkoutsController(VitaTrackDbContext context)
+    public WorkoutsController(AppDbContext context)
     {
         _context = context;
     }

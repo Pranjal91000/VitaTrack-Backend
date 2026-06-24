@@ -4,11 +4,11 @@ using VitaTrack.Core.Common;
 using VitaTrack.Core.Entities;
 using VitaTrack.Core.Entities.GlobalData;
 
-namespace VitaTrack.Infrastructure.Persistence;
+namespace VitaTrack.Infrastructure;
 
-public class VitaTrackDbContext : DbContext
+public class AppDbContext : DbContext
 {
-    public VitaTrackDbContext(DbContextOptions<VitaTrackDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Food> Foods => Set<Food>();
@@ -23,6 +23,7 @@ public class VitaTrackDbContext : DbContext
 
     public DbSet<Status> Statuses => Set<Status>();
     public DbSet<ExerciseType> ExeciseTypes => Set<ExerciseType>();
+    public DbSet<WeightTrack> WeightTracks => Set<WeightTrack>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

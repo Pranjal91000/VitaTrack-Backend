@@ -3,29 +3,30 @@ using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using VitaTrack.Core.Abstraction;
 using VitaTrack.Core.Interfaces;
-using VitaTrack.Infrastructure.Persistence;
+using VitaTrack.Infrastructure.Repositories;
 
-namespace VitaTrack.Infrastructure;
+namespace VitaTrack.Infrastructure.Extension;
 
-public static class DependencyInjection
+public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<VitaTrackDbContext>(options =>
+        services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
-                builder => builder.MigrationsAssembly(typeof(VitaTrackDbContext).Assembly.FullName)));
+                builder => builder.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
 
 
-        services.AddScoped<IAnalyticsService, VitaTrack.Infrastructure.Services.AnalyticsService>();
-        services.AddScoped<VitaTrack.Infrastructure.Services.IEmailService, VitaTrack.Infrastructure.Services.EmailService>();
-        services.AddScoped<IIdentityService, VitaTrack.Infrastructure.Identity.IdentityService>();
+        services.AddScoped<IAnalyticsService, Services.AnalyticsService>();
+        services.AddScoped<Services.IEmailService, Services.EmailService>();
+        services.AddScoped<IIdentityService, Identity.IdentityService>();
+        services.AddScoped<IWeightTrackRepository, WeightTrackRepository>();
 
-        services.AddScoped<VitaTrackDbContextInitialiser>();
+        services.AddScoped<DbInitializer>();
 
-        services.AddTransient<VitaTrack.Infrastructure.Jobs.DailyValuesJob>();
-        services.AddTransient<VitaTrack.Infrastructure.Jobs.JobsService>();
+        services.AddTransient<Jobs.DailyValuesJob>();
+        services.AddTransient<Jobs.JobsService>();
 
         services.AddHangfire(config => config
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)

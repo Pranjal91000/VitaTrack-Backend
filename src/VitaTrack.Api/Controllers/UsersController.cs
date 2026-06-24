@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VitaTrack.Api.Users.DTOs;
-using VitaTrack.Infrastructure.Persistence;
+using VitaTrack.Infrastructure;
 
 namespace VitaTrack.Api.Controllers;
 
@@ -12,9 +12,9 @@ namespace VitaTrack.Api.Controllers;
 [Authorize]
 public class UsersController : ControllerBase
 {
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
 
-    public UsersController(VitaTrackDbContext context)
+    public UsersController(AppDbContext context)
     {
         _context = context;
     }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using VitaTrack.Api.Dashboard.DTOs;
 using VitaTrack.Api.Meals.DTOs;
 using VitaTrack.Core.Interfaces;
-using VitaTrack.Infrastructure.Persistence;
+using VitaTrack.Infrastructure;
 
 namespace VitaTrack.Api.Controllers;
 
@@ -15,10 +15,10 @@ namespace VitaTrack.Api.Controllers;
 [Authorize]
 public class DashboardController : ControllerBase
 {
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
     private readonly IAnalyticsService _analyticsService;
 
-    public DashboardController(VitaTrackDbContext context, IAnalyticsService analyticsService)
+    public DashboardController(AppDbContext context, IAnalyticsService analyticsService)
     {
         _context = context;
         _analyticsService = analyticsService;

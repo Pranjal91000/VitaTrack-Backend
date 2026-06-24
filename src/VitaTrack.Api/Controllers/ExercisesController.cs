@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using VitaTrack.Api.Common.Models;
 using VitaTrack.Api.Workouts.DTOs;
 using VitaTrack.Core.Entities;
-using VitaTrack.Infrastructure.Persistence;
+using VitaTrack.Infrastructure;
 
 namespace VitaTrack.Api.Controllers;
 
@@ -19,10 +19,10 @@ public class ExercisesController : ControllerBase
         "video/mp4", "video/webm", "video/quicktime"
     };
 
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
     private readonly IWebHostEnvironment _env;
 
-    public ExercisesController(VitaTrackDbContext context, IWebHostEnvironment env)
+    public ExercisesController(AppDbContext context, IWebHostEnvironment env)
     {
         _context = context;
         _env = env;

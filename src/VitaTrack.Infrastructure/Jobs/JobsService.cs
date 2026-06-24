@@ -1,17 +1,16 @@
 using VitaTrack.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using VitaTrack.Infrastructure.Persistence;
 
 namespace VitaTrack.Infrastructure.Jobs;
 
 public class JobsService
 {
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
     private readonly IEmailService _emailService;
     private readonly ILogger<JobsService> _logger;
 
-    public JobsService(VitaTrackDbContext context, IEmailService emailService, ILogger<JobsService> logger)
+    public JobsService(AppDbContext context, IEmailService emailService, ILogger<JobsService> logger)
     {
         _context = context;
         _emailService = emailService;

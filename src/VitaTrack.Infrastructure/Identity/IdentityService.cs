@@ -8,16 +8,15 @@ using Microsoft.IdentityModel.Tokens;
 using VitaTrack.Core.Auth;
 using VitaTrack.Core.Entities;
 using VitaTrack.Core.Interfaces;
-using VitaTrack.Infrastructure.Persistence;
 
 namespace VitaTrack.Infrastructure.Identity;
 
 public class IdentityService : IIdentityService
 {
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
 
-    public IdentityService(VitaTrackDbContext context, IConfiguration configuration)
+    public IdentityService(AppDbContext context, IConfiguration configuration)
     {
         _context = context;
         _configuration = configuration;
@@ -126,4 +125,5 @@ public class IdentityService : IIdentityService
         var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
         return Convert.ToBase64String(bytes);
     }
+
 }

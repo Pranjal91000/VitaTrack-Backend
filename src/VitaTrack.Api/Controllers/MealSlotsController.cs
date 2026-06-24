@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VitaTrack.Api.Meals.DTOs;
 using VitaTrack.Core.Entities;
-using VitaTrack.Infrastructure.Persistence;
+using VitaTrack.Infrastructure;
 
 namespace VitaTrack.Api.Controllers;
 
@@ -13,9 +13,9 @@ namespace VitaTrack.Api.Controllers;
 [Authorize]
 public class MealSlotsController : ControllerBase
 {
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
 
-    public MealSlotsController(VitaTrackDbContext context)
+    public MealSlotsController(AppDbContext context)
     {
         _context = context;
     }

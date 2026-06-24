@@ -1,14 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using VitaTrack.Core.Interfaces;
-using VitaTrack.Infrastructure.Persistence;
 
 namespace VitaTrack.Infrastructure.Services;
 
 public class AnalyticsService : IAnalyticsService
 {
-    private readonly VitaTrackDbContext _context;
+    private readonly AppDbContext _context;
 
-    public AnalyticsService(VitaTrackDbContext context)
+    public AnalyticsService(AppDbContext context)
     {
         _context = context;
     }
