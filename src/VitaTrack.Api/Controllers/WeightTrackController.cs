@@ -24,7 +24,7 @@ namespace VitaTrack.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<WeightTrackViewModel>> GetWeightAsync([FromQuery] long? id)
+        public async Task<ActionResult<WeightTrackViewModel>> GetWeightAsync([FromQuery] long id)
         {
             var data = await weightTrackService.GetWeightTracked(id);
 
@@ -34,7 +34,19 @@ namespace VitaTrack.Api.Controllers
             return Ok(data);
         }
 
-        [HttpGet("weight-histroy")]
+
+        [HttpGet("latest-record")]
+        public async Task<ActionResult<WeightTrackViewModel>> GetWeightAsync()
+        {
+            var data = await weightTrackService.GetWeightTracked(null);
+
+            if (data is null)
+                return NotFound();
+            
+            return Ok(data);
+        }
+
+        [HttpGet("weight-history")]
         public async Task<ActionResult<List<WeightTrackViewModel>>> GetWeightHistoryAsync([FromQuery] DateOnly fromDate, DateOnly toDate)
         {
             var data =  await weightTrackService.GetWeightTrackedHistory(fromDate, toDate);
