@@ -5,7 +5,7 @@ namespace VitaTrack.Core.Entities
 {
     public class WeightTrack: BaseEntity<long>
     {
-        public DateOnly DateRecordedOn;
-        public Decimal Weight;
+        public DateOnly DateRecordedOn { get; set; }
+        public decimal Weight { get; set; }
     }
 }

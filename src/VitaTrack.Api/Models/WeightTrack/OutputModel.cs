@@ -2,7 +2,7 @@
 {
     public class WeightTrackViewModel
     {
-        public DateOnly RecordedOn;
-        public decimal Weight;
+        public DateOnly RecordedOn { get; set; }
+        public decimal Weight { get; set; }
     }
 }

@@ -33,7 +33,7 @@ namespace VitaTrack.Api.Services
         {
             return await _weightTrackRepository.DeleteWeightAsync(id);
         }
-        public async Task<WeightTrackViewModel> GetWeightTracked(long id)
+        public async Task<WeightTrackViewModel> GetWeightTracked(long? id)
         {
             var data = await _weightTrackRepository.GetWeightById(id);
             return new WeightTrackViewModel

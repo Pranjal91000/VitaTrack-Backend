@@ -3,8 +3,8 @@
 
     public class WeightTrackBaseInputModel
     {
-        public DateOnly RecordedOn;
-        public decimal Weight;
+        public DateOnly RecordedOn { get; set; }
+        public decimal Weight { get; set; }
     }
 
     public class WeightTrackSaveInputModel: WeightTrackBaseInputModel
@@ -13,6 +13,6 @@
 
     public class WeightTrackUpdateInputModel: WeightTrackBaseInputModel
     {
-        public long Id;
+        public long Id { get; set; }
     }
 }
