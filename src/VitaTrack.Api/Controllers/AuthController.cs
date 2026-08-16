@@ -1,26 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
+using VitaTrack.Api.Abstractions;
 using VitaTrack.Core.Auth;
-using VitaTrack.Core.Interfaces;
 
 namespace VitaTrack.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(IAuthService authService) : ControllerBase
 {
-    private readonly IIdentityService _identityService;
-
-    public AuthController(IIdentityService identityService)
-    {
-        _identityService = identityService;
-    }
+    private readonly IAuthService _authService = authService;
 
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request, CancellationToken token)
     {
         try
         {
-            return Ok(await _identityService.RegisterAsync(request, token));
+            return Ok(await _authService.RegisterAsync(request, token));
         }
         catch (Exception ex) when (ex.Message.Contains("already exists"))
         {
@@ -33,7 +28,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            return Ok(await _identityService.LoginAsync(request, token));
+            return Ok(await _authService.LoginAsync(request, token));
         }
         catch (Exception ex) when (ex.Message.Contains("Invalid"))
         {
@@ -46,7 +41,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            return Ok(await _identityService.RefreshTokenAsync(request, token));
+            return Ok(await _authService.RefreshTokenAsync(request, token));
         }
         catch (Exception ex) when (ex.Message.Contains("Invalid") || ex.Message.Contains("refresh"))
         {

@@ -16,6 +16,7 @@ namespace VitaTrack.Api.Extension
             services.AddScoped<IWorkoutService, WorkoutService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IAuthService, AuthService>();
             return services;
         }
     }

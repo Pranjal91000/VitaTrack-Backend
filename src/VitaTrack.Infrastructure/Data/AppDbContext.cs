@@ -1,14 +1,15 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using VitaTrack.Core.Abstraction;
 using VitaTrack.Core.Common;
 using VitaTrack.Core.Entities;
 using VitaTrack.Core.Entities.GlobalData;
 
 namespace VitaTrack.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options, IJwtHelperService jwtHelperService) : DbContext(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Food> Foods => Set<Food>();
@@ -20,14 +21,14 @@ public class AppDbContext : DbContext
     public DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
     public DbSet<Set> Sets => Set<Set>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<WeightTracker> WeightTrackers => Set<WeightTracker>();
 
     public DbSet<Status> Statuses => Set<Status>();
     public DbSet<ExerciseType> ExeciseTypes => Set<ExerciseType>();
-    public DbSet<WeightTracker> WeightTracks => Set<WeightTracker>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        foreach (var entry in ChangeTracker.Entries<BaseEntity<Guid>>())
+        foreach (var entry in ChangeTracker.Entries<BaseEntity<long>>())
         {
             switch (entry.State)
             {
@@ -52,22 +53,21 @@ public class AppDbContext : DbContext
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        builder.Entity<Food>()
-            .HasIndex(x => x.Name);
-
-        builder.Entity<Meal>()
-            .HasIndex(x => new { x.UserId, x.Date });
-
-        builder.Entity<WeightTracker>().HasQueryFilter(e => !e.IsDeleted);
+        // Global Query Filters (Soft Delete & User Multitenancy)
         builder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<MealSlot>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<Meal>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<MealFood>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<Exercise>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<Workout>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<WorkoutExercise>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<Set>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<RefreshToken>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<RefreshToken>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
+
+        // System defaults (UserId == null) + User-specific items
+        builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted && (e.UserId == null || e.UserId == _jwtHelperService.GetUserId()));
+        builder.Entity<Exercise>().HasQueryFilter(e => !e.IsDeleted && (e.UserId == null || e.UserId == _jwtHelperService.GetUserId()));
+        builder.Entity<MealSlot>().HasQueryFilter(e => !e.IsDeleted && (e.UserId == null || e.UserId == _jwtHelperService.GetUserId()));
+
+        // User-owned domain entities
+        builder.Entity<Meal>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
+        builder.Entity<Workout>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
+        builder.Entity<WeightTracker>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
+        builder.Entity<MealFood>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
+        builder.Entity<WorkoutExercise>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
+        builder.Entity<Set>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
     }
 }

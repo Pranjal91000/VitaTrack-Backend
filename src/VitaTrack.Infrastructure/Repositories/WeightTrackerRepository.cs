@@ -12,13 +12,13 @@ namespace VitaTrack.Infrastructure.Repositories
 
         public async Task<bool> SaveWeightAsync(WeightTracker data)
         {
-            await _appDbContext.WeightTracks.AddAsync(data);
+            await _appDbContext.WeightTrackers.AddAsync(data);
             return await _appDbContext.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> UpdateWeightAsync(WeightTracker input)
         {
-            var data = await _appDbContext.WeightTracks.Where(x => x.Id == input.Id).FirstOrDefaultAsync();
+            var data = await _appDbContext.WeightTrackers.Where(x => x.Id == input.Id).FirstOrDefaultAsync();
             if (data == null) return false;
 
             data.Weight = input.Weight;
@@ -29,16 +29,16 @@ namespace VitaTrack.Infrastructure.Repositories
 
         public async Task<bool> DeleteWeightAsync(long id)
         {
-            var data = await _appDbContext.WeightTracks.FirstOrDefaultAsync(x => x.Id == id);
+            var data = await _appDbContext.WeightTrackers.FirstOrDefaultAsync(x => x.Id == id);
             if (data == null) return false;
 
-            _appDbContext.WeightTracks.Remove(data);
+            _appDbContext.WeightTrackers.Remove(data);
             return await _appDbContext.SaveChangesAsync() > 0;
         }
 
         public async Task<GetWeightByDate> GetWeightById(long? id)
         {
-            var data = await _appDbContext.WeightTracks
+            var data = await _appDbContext.WeightTrackers
                 .Where(x => id == null || x.Id == id)
                 .OrderByDescending(x => x.DateRecordedOn)
                 .FirstOrDefaultAsync();
@@ -54,7 +54,7 @@ namespace VitaTrack.Infrastructure.Repositories
 
         public async Task<List<GetWeightByDate>> GetWeightHistory()
         {
-            var data = await _appDbContext.WeightTracks.Select(x => new GetWeightByDate
+            var data = await _appDbContext.WeightTrackers.Select(x => new GetWeightByDate
             {
                 RecordedOn = x.DateRecordedOn,
                 Weight = x.Weight
