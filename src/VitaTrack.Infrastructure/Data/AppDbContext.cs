@@ -62,12 +62,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IJwtHelperServ
         builder.Entity<Workout>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
         builder.Entity<WeightTracker>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
 
+        builder.Entity<WeightTracker>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
-        builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
-        builder.Entity<MealSlot>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
-        builder.Entity<Meal>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
-        builder.Entity<MealFood>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
-        builder.Entity<WorkoutExercise>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
-        builder.Entity<Set>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
+        builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<MealSlot>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<Meal>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<MealFood>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<WorkoutExercise>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<Set>().HasQueryFilter(e => !e.IsDeleted);
     }
 }
