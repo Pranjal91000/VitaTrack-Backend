@@ -6,8 +6,8 @@ namespace VitaTrack.Core.Entities.GlobalData
     [Table("Status", Schema = "globaldata")]
     public class Status
     {
-        public string statusName { get; set; } = string.Empty;
+        public string StatusName { get; set; } = string.Empty;
         [Key]
-        public short statusNo { get; set; }
+        public short StatusNo { get; set; }
     }
 }

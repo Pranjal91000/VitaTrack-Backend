@@ -10,7 +10,7 @@ namespace VitaTrack.Core.Entities.GlobalData
         public short ExerciseTypeNo { get; set; }
         public string ExerciseName { get; set; } = string.Empty;
         public string? ExerciseDescription { get; set; }
-        public short statusNo { get; set; }
-        public string? statusRemark { get; set; }
+        public short StatusNo { get; set; }
+        public string? StatusRemark { get; set; }
     }
 }

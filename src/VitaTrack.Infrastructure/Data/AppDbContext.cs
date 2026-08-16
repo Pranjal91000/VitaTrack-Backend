@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VitaTrack.Core.Abstraction;
 using VitaTrack.Core.Common;
 using VitaTrack.Core.Entities;
+using VitaTrack.Core.Entities.GlobalData;
 
 namespace VitaTrack.Infrastructure.Data;
 
