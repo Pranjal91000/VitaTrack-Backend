@@ -32,6 +32,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IJwtHelperServ
         {
             switch (entry.State)
             {
+                case EntityState.Deleted:
+                    entry.State = EntityState.Modified;
+                    entry.Entity.IsDeleted = true;
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+                    break;
                 case EntityState.Modified:
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                     break;
