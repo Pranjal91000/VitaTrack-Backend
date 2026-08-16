@@ -44,6 +44,7 @@ namespace VitaTrack.Api.Services
 
             return new WeightTrackerViewModel
             {
+                Id = data.Id,
                 RecordedOn = data.RecordedOn,
                 Weight = data.Weight
             };
@@ -54,6 +55,7 @@ namespace VitaTrack.Api.Services
             var data = await _weightTrackerRepository.GetWeightHistory();
             return data.Select(x => new WeightTrackerViewModel
             {
+                Id = x.Id,
                 RecordedOn = x.RecordedOn,
                 Weight = x.Weight
             }).ToList();

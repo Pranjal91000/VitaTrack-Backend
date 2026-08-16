@@ -5,22 +5,25 @@ using VitaTrack.Core.Entities;
 
 namespace VitaTrack.Api.Services
 {
-    public class MealService(IMealRepository mealRepository) : IMealService
+    public class MealService(IMealRepository mealRepository, IJwtHelperService jwtHelperService) : IMealService
     {
         private readonly IMealRepository _mealRepository = mealRepository;
+        private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
-        public async Task<DailyMealsDto?> GetDailyMealsAsync(long userId, string dateString, CancellationToken cancellationToken = default)
+        public async Task<DailyMealsDto?> GetDailyMealsAsync(string dateString, CancellationToken cancellationToken = default)
         {
             if (!DateOnly.TryParse(dateString, out var parsedDate))
                 return null;
 
+            var userId = _jwtHelperService.GetUserId();
             var meals = await _mealRepository.GetDailyMealsAsync(userId, parsedDate, cancellationToken);
             var mealDtos = meals.Select(MapMealToDto).ToList();
             return new DailyMealsDto(mealDtos);
         }
 
-        public async Task<(MealDto? Meal, string? Error)> CreateMealAsync(long userId, CreateMealRequest request, CancellationToken cancellationToken = default)
+        public async Task<(MealDto? Meal, string? Error)> CreateMealAsync(CreateMealRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             if (!await _mealRepository.CanUseMealSlotAsync(userId, request.MealSlotId, cancellationToken))
                 return (null, "Invalid meal slot.");
 
@@ -53,8 +56,9 @@ namespace VitaTrack.Api.Services
             return (MapMealToDto(createdMeal), null);
         }
 
-        public async Task<(bool Success, string? Error)> DeleteMealAsync(long mealId, long userId, CancellationToken cancellationToken = default)
+        public async Task<(bool Success, string? Error)> DeleteMealAsync(long mealId, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var meal = await _mealRepository.GetByIdAsync(mealId, cancellationToken);
             if (meal == null) return (false, "NotFound");
             if (meal.UserId != userId) return (false, "Forbid");
@@ -63,8 +67,9 @@ namespace VitaTrack.Api.Services
             return (true, null);
         }
 
-        public async Task<(NutrientSummaryDto? Summary, string? Error)> UpdateMealFoodAsync(long mealId, long foodId, long userId, UpdateMealFoodRequest request, CancellationToken cancellationToken = default)
+        public async Task<(NutrientSummaryDto? Summary, string? Error)> UpdateMealFoodAsync(long mealId, long foodId, UpdateMealFoodRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var meal = await _mealRepository.GetByIdAsync(mealId, cancellationToken);
             if (meal == null) return (null, "MealNotFound");
             if (meal.UserId != userId) return (null, "Forbid");

@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VitaTrack.Api.Abstractions;
@@ -16,11 +15,7 @@ public class DashboardController(IDashboardService dashboardService) : Controlle
     [HttpGet("daily")]
     public async Task<ActionResult<DashboardDailyDto>> GetDailyDashboard([FromQuery] string date, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var result = await _dashboardService.GetDailyDashboardAsync(userId, date, cancellationToken);
+        var result = await _dashboardService.GetDailyDashboardAsync(date, cancellationToken);
         return Ok(result);
     }
 }

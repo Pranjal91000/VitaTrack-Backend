@@ -79,11 +79,11 @@ app.UseSwagger();
 // Global Exception Handler
 
 //app.UseExceptionHandler();                   // 1. Catch all unhandled exceptions
+app.UseCors("DefinedOrigins");               // 1. CORS headers (must be before HTTPS redirect so OPTIONS preflights aren't redirected)
 app.UseHttpsRedirection();                   // 2. Redirect HTTP → HTTPS
 app.UseRouting();                            // 3. Match routes
-app.UseCors("DefinedOrigins");               // 4. CORS headers
-app.UseAuthentication();                     // 5. Establish identity
-app.UseAuthorization();                      // 6. Check permissions
+app.UseAuthentication();                     // 4. Establish identity
+app.UseAuthorization();                      // 5. Check permissions
 app.UseMiddleware<RequestLoggingMiddleware>();// 10. Custom middleware
 app.UseMiddleware<CorrelationIdMiddleware>();// 10. Custom middleware
 app.MapControllers();                        // 11. Execute endpoints

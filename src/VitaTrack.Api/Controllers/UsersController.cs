@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VitaTrack.Api.Abstractions;
@@ -16,11 +15,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpGet("profile")]
     public async Task<ActionResult<UserProfileDto>> GetProfile(CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var profile = await _userService.GetProfileAsync(userId, cancellationToken);
+        var profile = await _userService.GetProfileAsync(cancellationToken);
         if (profile == null) return NotFound("User not found");
 
         return Ok(profile);
@@ -29,11 +24,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpPut("profile")]
     public async Task<ActionResult<UserProfileDto>> UpdateProfile([FromBody] UpdateProfileRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var profile = await _userService.UpdateProfileAsync(userId, request, cancellationToken);
+        var profile = await _userService.UpdateProfileAsync(request, cancellationToken);
         if (profile == null) return NotFound("User not found");
 
         return Ok(profile);

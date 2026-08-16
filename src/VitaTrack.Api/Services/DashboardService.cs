@@ -10,15 +10,19 @@ namespace VitaTrack.Api.Services
         IMealRepository mealRepository,
         IWorkoutRepository workoutRepository,
         IUserRepository userRepository,
-        IAnalyticsService analyticsService) : IDashboardService
+        IAnalyticsService analyticsService,
+        IJwtHelperService jwtHelperService) : IDashboardService
     {
         private readonly IMealRepository _mealRepository = mealRepository;
         private readonly IWorkoutRepository _workoutRepository = workoutRepository;
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IAnalyticsService _analyticsService = analyticsService;
+        private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
-        public async Task<DashboardDailyDto> GetDailyDashboardAsync(long userId, string dateString, CancellationToken cancellationToken = default)
+        public async Task<DashboardDailyDto> GetDailyDashboardAsync(string dateString, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
+
             if (!DateOnly.TryParse(dateString, out var parsedDate))
                 parsedDate = DateOnly.FromDateTime(DateTime.UtcNow);
 

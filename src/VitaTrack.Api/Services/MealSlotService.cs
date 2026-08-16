@@ -5,18 +5,21 @@ using VitaTrack.Core.Entities;
 
 namespace VitaTrack.Api.Services
 {
-    public class MealSlotService(IMealSlotRepository mealSlotRepository) : IMealSlotService
+    public class MealSlotService(IMealSlotRepository mealSlotRepository, IJwtHelperService jwtHelperService) : IMealSlotService
     {
         private readonly IMealSlotRepository _mealSlotRepository = mealSlotRepository;
+        private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
-        public async Task<List<MealSlotDto>> GetSlotsAsync(long userId, CancellationToken cancellationToken = default)
+        public async Task<List<MealSlotDto>> GetSlotsAsync(CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var slots = await _mealSlotRepository.GetSlotsByUserIdAsync(userId, cancellationToken);
             return slots.Select(s => new MealSlotDto(s.Id, s.UserId, s.Name, s.SortOrder)).ToList();
         }
 
-        public async Task<MealSlotDto> CreateSlotAsync(long userId, CreateMealSlotRequest request, CancellationToken cancellationToken = default)
+        public async Task<MealSlotDto> CreateSlotAsync(CreateMealSlotRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var maxOrder = await _mealSlotRepository.GetMaxSortOrderAsync(userId, cancellationToken);
             var slot = new MealSlot
             {

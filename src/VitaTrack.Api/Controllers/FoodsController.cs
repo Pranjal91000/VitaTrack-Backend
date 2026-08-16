@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VitaTrack.Api.Abstractions;
@@ -23,21 +22,14 @@ public class FoodsController(IFoodService foodService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<FoodDto>> CreateFood([FromBody] CreateFoodRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var userId = userIdString != null ? long.Parse(userIdString) : (long?)null;
-
-        var result = await _foodService.CreateFoodAsync(userId, request, cancellationToken);
+        var result = await _foodService.CreateFoodAsync(request, cancellationToken);
         return CreatedAtAction(nameof(SearchFoods), new { search = result.Name }, result);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult<FoodDto>> UpdateFood(long id, [FromBody] UpdateFoodRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (food, error) = await _foodService.UpdateFoodAsync(id, userId, request, cancellationToken);
+        var (food, error) = await _foodService.UpdateFoodAsync(id, request, cancellationToken);
         if (error == "NotFound") return NotFound("Food not found");
         if (error == "Forbid") return Forbid();
 
@@ -47,11 +39,7 @@ public class FoodsController(IFoodService foodService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteFood(long id, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (success, error) = await _foodService.DeleteFoodAsync(id, userId, cancellationToken);
+        var (success, error) = await _foodService.DeleteFoodAsync(id, cancellationToken);
         if (error == "NotFound") return NotFound("Food not found");
         if (error == "Forbid") return Forbid();
 

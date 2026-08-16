@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VitaTrack.Api.Abstractions;
@@ -17,11 +16,7 @@ public class ReportsController(IReportService reportService) : ControllerBase
     [HttpGet("nutrition")]
     public async Task<ActionResult<NutritionReportDto>> GetNutritionReport([FromQuery] string from, [FromQuery] string to, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (report, error) = await _reportService.GetNutritionReportAsync(userId, from, to, cancellationToken);
+        var (report, error) = await _reportService.GetNutritionReportAsync(from, to, cancellationToken);
         if (error == "InvalidDateFormat") return BadRequest("Invalid date format (yyyy-MM-dd)");
         if (error == "InvalidDateRange") return BadRequest("To date cannot be before From date");
 
@@ -31,11 +26,7 @@ public class ReportsController(IReportService reportService) : ControllerBase
     [HttpGet("workouts")]
     public async Task<ActionResult<WorkoutReportDto>> GetWorkoutReport([FromQuery] string from, [FromQuery] string to, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (report, error) = await _reportService.GetWorkoutReportAsync(userId, from, to, cancellationToken);
+        var (report, error) = await _reportService.GetWorkoutReportAsync(from, to, cancellationToken);
         if (error == "InvalidDateFormat") return BadRequest("Invalid date format (yyyy-MM-dd)");
         if (error == "InvalidDateRange") return BadRequest("To date cannot be before From date");
 
@@ -45,11 +36,7 @@ public class ReportsController(IReportService reportService) : ControllerBase
     [HttpGet("exercises/{exerciseId}/monthly")]
     public async Task<ActionResult<ExerciseMonthlyReportDto>> GetExerciseMonthlyReport(long exerciseId, [FromQuery] string month, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (report, error) = await _reportService.GetExerciseMonthlyReportAsync(userId, exerciseId, month, cancellationToken);
+        var (report, error) = await _reportService.GetExerciseMonthlyReportAsync(exerciseId, month, cancellationToken);
         if (error == "InvalidMonthFormat") return BadRequest("Invalid month format (yyyy-MM)");
         if (error == "NotFound") return NotFound("Exercise not found");
 
