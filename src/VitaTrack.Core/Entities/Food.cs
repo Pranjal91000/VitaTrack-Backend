@@ -5,7 +5,6 @@ namespace VitaTrack.Core.Entities;
 
 public class Food : BaseEntity<long>
 {
-    public long? UserId { get; set; }
     public string Name { get; set; } = null!;
     public decimal ServingSize { get; set; }
     public string Unit { get; set; } = "g";
@@ -17,6 +16,4 @@ public class Food : BaseEntity<long>
     public decimal SugarG { get; set; }
     public decimal SodiumMg { get; set; }
     public JsonDocument? AdditionalNutrients { get; set; }
-
-    public User? User { get; set; }
 }
