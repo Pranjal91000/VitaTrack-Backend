@@ -28,9 +28,9 @@ namespace VitaTrack.Infrastructure.Repositories
             _appDbContext.WeightTracks.Remove(data);
             return await _appDbContext.SaveChangesAsync() > 0;
         }
-        public async Task<GetWeightByDate> GetWeightById(long id)
+        public async Task<GetWeightByDate> GetWeightById(long? id)
         {
-            var data = await _appDbContext.WeightTracks.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var data = await _appDbContext.WeightTracks.Where(x => id == null ||  x.Id == id).OrderByDescending(x => x.DateRecordedOn).FirstOrDefaultAsync();
             return new GetWeightByDate
             {
                 RecordedOn = data.DateRecordedOn,

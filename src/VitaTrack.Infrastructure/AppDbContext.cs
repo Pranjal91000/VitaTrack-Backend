@@ -58,6 +58,7 @@ public class AppDbContext : DbContext
         builder.Entity<Meal>()
             .HasIndex(x => new { x.UserId, x.Date });
 
+        builder.Entity<WeightTrack>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<MealSlot>().HasQueryFilter(e => !e.IsDeleted);

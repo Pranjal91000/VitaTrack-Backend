@@ -13,8 +13,8 @@ using VitaTrack.Infrastructure;
 namespace VitaTrack.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260603201444_Inital")]
-    partial class Inital
+    [Migration("20260812191615_MadeUserIdMandatoryAcrossAllRecords")]
+    partial class MadeUserIdMandatoryAcrossAllRecords
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -253,7 +253,7 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("UserId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -261,6 +261,8 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.HasIndex("FoodId");
 
                     b.HasIndex("MealId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("MealFoods");
                 });
@@ -386,7 +388,7 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("UserId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("WeightKg")
@@ -396,6 +398,8 @@ namespace VitaTrack.Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("WorkoutExerciseId");
 
@@ -444,9 +448,6 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
                     b.Property<decimal?>("WeightKg")
                         .HasColumnType("numeric");
 
@@ -466,16 +467,24 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateOnly>("DateRecordedOn")
+                        .HasColumnType("date");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("UserId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("WeightTracks");
                 });
@@ -548,7 +557,7 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("UserId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("WorkoutId")
@@ -557,6 +566,8 @@ namespace VitaTrack.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ExerciseId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("WorkoutId");
 
@@ -614,9 +625,17 @@ namespace VitaTrack.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("VitaTrack.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Food");
 
                     b.Navigation("Meal");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.MealSlot", b =>
@@ -641,13 +660,32 @@ namespace VitaTrack.Infrastructure.Migrations
 
             modelBuilder.Entity("VitaTrack.Core.Entities.Set", b =>
                 {
+                    b.HasOne("VitaTrack.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VitaTrack.Core.Entities.WorkoutExercise", "WorkoutExercise")
                         .WithMany("Sets")
                         .HasForeignKey("WorkoutExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("User");
+
                     b.Navigation("WorkoutExercise");
+                });
+
+            modelBuilder.Entity("VitaTrack.Core.Entities.WeightTrack", b =>
+                {
+                    b.HasOne("VitaTrack.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VitaTrack.Core.Entities.Workout", b =>
@@ -669,6 +707,12 @@ namespace VitaTrack.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("VitaTrack.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VitaTrack.Core.Entities.Workout", "Workout")
                         .WithMany("Exercises")
                         .HasForeignKey("WorkoutId")
@@ -676,6 +720,8 @@ namespace VitaTrack.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Exercise");
+
+                    b.Navigation("User");
 
                     b.Navigation("Workout");
                 });

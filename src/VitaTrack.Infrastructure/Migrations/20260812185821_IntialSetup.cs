@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace VitaTrack.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Inital : Migration
+    public partial class IntialSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,6 +53,9 @@ namespace VitaTrack.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
@@ -60,31 +63,11 @@ namespace VitaTrack.Infrastructure.Migrations
                     WeightKg = table.Column<decimal>(type: "numeric", nullable: true),
                     HeightCm = table.Column<decimal>(type: "numeric", nullable: true),
                     Bmr = table.Column<decimal>(type: "numeric", nullable: true),
-                    Role = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    Role = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "WeightTracks",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WeightTracks", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,6 +185,29 @@ namespace VitaTrack.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "WeightTracks",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DateRecordedOn = table.Column<DateOnly>(type: "date", nullable: false),
+                    Weight = table.Column<decimal>(type: "numeric", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UserId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WeightTracks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WeightTracks_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Workouts",
                 columns: table => new
                 {
@@ -284,6 +290,11 @@ namespace VitaTrack.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_WorkoutExercises_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_WorkoutExercises_Workouts_WorkoutId",
                         column: x => x.WorkoutId,
                         principalTable: "Workouts",
@@ -320,6 +331,11 @@ namespace VitaTrack.Infrastructure.Migrations
                         principalTable: "Meals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MealFoods_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -345,6 +361,11 @@ namespace VitaTrack.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sets_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Sets_WorkoutExercises_WorkoutExerciseId",
                         column: x => x.WorkoutExerciseId,
@@ -379,6 +400,11 @@ namespace VitaTrack.Infrastructure.Migrations
                 column: "MealId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MealFoods_UserId",
+                table: "MealFoods",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Meals_MealSlotId",
                 table: "Meals",
                 column: "MealSlotId");
@@ -399,14 +425,29 @@ namespace VitaTrack.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sets_UserId",
+                table: "Sets",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sets_WorkoutExerciseId",
                 table: "Sets",
                 column: "WorkoutExerciseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_WeightTracks_UserId",
+                table: "WeightTracks",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WorkoutExercises_ExerciseId",
                 table: "WorkoutExercises",
                 column: "ExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutExercises_UserId",
+                table: "WorkoutExercises",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkoutExercises_WorkoutId",

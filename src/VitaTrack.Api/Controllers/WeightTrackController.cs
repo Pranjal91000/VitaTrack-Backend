@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using VitaTrack.Api.Abstractions;
 using VitaTrack.Api.Models.WeightTrack;
 
@@ -26,13 +27,30 @@ namespace VitaTrack.Api.Controllers
         public async Task<ActionResult<WeightTrackViewModel>> GetWeightAsync([FromQuery] long id)
         {
             var data = await weightTrackService.GetWeightTracked(id);
-            return data;
+
+            if (data is null)
+                return NotFound();
+
+            return Ok(data);
         }
 
-        [HttpGet]
+
+        [HttpGet("latest-record")]
+        public async Task<ActionResult<WeightTrackViewModel>> GetWeightAsync()
+        {
+            var data = await weightTrackService.GetWeightTracked(null);
+
+            if (data is null)
+                return NotFound();
+            
+            return Ok(data);
+        }
+
+        [HttpGet("weight-history")]
         public async Task<ActionResult<List<WeightTrackViewModel>>> GetWeightHistoryAsync([FromQuery] DateOnly fromDate, DateOnly toDate)
         {
-            return await weightTrackService.GetWeightTrackedHistory(fromDate, toDate);
+            var data =  await weightTrackService.GetWeightTrackedHistory(fromDate, toDate);
+            return Ok(data);
         }
     }
 }

@@ -1,9 +1,14 @@
+using System.Security.Cryptography;
 using VitaTrack.Core.Common;
 
 namespace VitaTrack.Core.Entities;
 
-public class User : BaseEntity<long>, IAggregateRoot
+public class User
 {
+    public long Id { get; set; } = default!;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    public bool IsDeleted { get; set; }
     public string Email { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
     public string Name { get; set; } = null!;
