@@ -1,11 +1,11 @@
 using Hangfire;
-using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VitaTrack.Core.Abstraction;
 using VitaTrack.Core.Interfaces;
 using VitaTrack.Infrastructure.Repositories;
+using VitaTrack.Infrastructure.Data;
 
 namespace VitaTrack.Infrastructure.Extension;
 
@@ -20,19 +20,15 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IAnalyticsService, Services.AnalyticsService>();
         services.AddScoped<Services.IEmailService, Services.EmailService>();
-        services.AddScoped<IIdentityService, Identity.IdentityService>();
-        services.AddScoped<IWeightTrackRepository, WeightTrackRepository>();
+        services.AddScoped<IWeightTrackerRepository, WeightTrackerRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IMealSlotRepository, MealSlotRepository>();
+        services.AddScoped<IFoodRepository, FoodRepository>();
+        services.AddScoped<IMealRepository, MealRepository>();
+        services.AddScoped<IExerciseRepository, ExerciseRepository>();
+        services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+        services.AddScoped<IReportRepository, ReportRepository>();
 
-        services.AddScoped<DbInitializer>();
-
-        services.AddTransient<Jobs.DailyValuesJob>();
-        services.AddTransient<Jobs.JobsService>();
-
-        services.AddHangfire(config => config
-            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(configuration.GetConnectionString("DefaultConnection"))));
 
         services.AddHangfireServer();
 

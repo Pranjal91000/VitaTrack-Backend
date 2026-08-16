@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VitaTrack.Core.Interfaces;
+using VitaTrack.Infrastructure.Data;
 
 namespace VitaTrack.Infrastructure.Services;
 
@@ -12,9 +13,6 @@ public class AnalyticsService : IAnalyticsService
         _context = context;
     }
 
-    /// <summary>
-    /// Consecutive days ending today or yesterday where the user logged at least one meal or one non-template workout.
-    /// </summary>
     public async Task<int> GetWellnessStreakAsync(long userId, CancellationToken cancellationToken)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
