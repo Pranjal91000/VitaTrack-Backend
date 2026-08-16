@@ -4,7 +4,7 @@ using VitaTrack.Core.Abstraction;
 using VitaTrack.Core.Common;
 using VitaTrack.Core.Entities;
 
-namespace VitaTrack.Infrastructure;
+namespace VitaTrack.Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options, IJwtHelperService jwtHelperService) : DbContext(options)
 {
@@ -61,7 +61,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IJwtHelperServ
         builder.Entity<Workout>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
         builder.Entity<WeightTracker>().HasQueryFilter(e => !e.IsDeleted && e.UserId == _jwtHelperService.GetUserId());
 
-        builder.Entity<WeightTrack>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<WeightTracker>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<MealSlot>().HasQueryFilter(e => !e.IsDeleted);

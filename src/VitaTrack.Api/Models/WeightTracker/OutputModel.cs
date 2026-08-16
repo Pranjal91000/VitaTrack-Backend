@@ -1,6 +1,6 @@
-﻿namespace VitaTrack.Api.Models.WeightTrack
+namespace VitaTrack.Api.Models.WeightTracker
 {
-    public class WeightTrackViewModel
+    public class WeightTrackerViewModel
     {
         public DateOnly RecordedOn { get; set; }
         public decimal Weight { get; set; }

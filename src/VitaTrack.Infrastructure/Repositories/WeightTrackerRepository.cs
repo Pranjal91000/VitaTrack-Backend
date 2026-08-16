@@ -1,19 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using VitaTrack.Core.Abstraction;
 using VitaTrack.Core.Entities;
 using VitaTrack.Core.Models;
+using VitaTrack.Infrastructure.Data;
+
 namespace VitaTrack.Infrastructure.Repositories
 {
-    public class WeightTrackRepository(AppDbContext appDbContext) : IWeightTrackRepository
+    public class WeightTrackerRepository(AppDbContext appDbContext) : IWeightTrackerRepository
     {
         private readonly AppDbContext _appDbContext = appDbContext;
 
-        public async Task<bool> SaveWeightAsync(WeightTrack data)
+        public async Task<bool> SaveWeightAsync(WeightTracker data)
         {
             await _appDbContext.WeightTrackers.AddAsync(data);
             return await _appDbContext.SaveChangesAsync() > 0;
         }
-        public async Task<bool> UpdateWeightAsync(WeightTrack input)
+
+        public async Task<bool> UpdateWeightAsync(WeightTracker input)
         {
             var data = await _appDbContext.WeightTrackers.Where(x => x.Id == input.Id).FirstOrDefaultAsync();
             if (data == null) return false;
@@ -23,6 +26,7 @@ namespace VitaTrack.Infrastructure.Repositories
 
             return await _appDbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<bool> DeleteWeightAsync(long id)
         {
             var data = await _appDbContext.WeightTrackers.FirstOrDefaultAsync(x => x.Id == id);
@@ -31,6 +35,7 @@ namespace VitaTrack.Infrastructure.Repositories
             _appDbContext.WeightTrackers.Remove(data);
             return await _appDbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<GetWeightByDate> GetWeightById(long? id)
         {
             var data = await _appDbContext.WeightTrackers
@@ -46,12 +51,13 @@ namespace VitaTrack.Infrastructure.Repositories
                 Weight = data.Weight
             };
         }
+
         public async Task<List<GetWeightByDate>> GetWeightHistory()
         {
             var data = await _appDbContext.WeightTrackers.Select(x => new GetWeightByDate
             {
-               RecordedOn = x.DateRecordedOn,
-               Weight =  x.Weight
+                RecordedOn = x.DateRecordedOn,
+                Weight = x.Weight
             }).ToListAsync();
 
             return data;

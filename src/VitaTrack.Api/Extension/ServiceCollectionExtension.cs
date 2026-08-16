@@ -1,4 +1,4 @@
-﻿using VitaTrack.Api.Abstractions;
+using VitaTrack.Api.Abstractions;
 using VitaTrack.Api.Services;
 
 namespace VitaTrack.Api.Extension
@@ -17,7 +17,6 @@ namespace VitaTrack.Api.Extension
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IWeightTrackService, WeightTrackService>();
             return services;
         }
     }

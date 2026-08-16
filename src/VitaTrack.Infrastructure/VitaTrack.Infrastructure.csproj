@@ -4,6 +4,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Scripts\globaldata.sql" />
+  </ItemGroup>
 
   <ItemGroup>
 	  <ProjectReference Include="..\VitaTrack.Core\VitaTrack.Core.csproj" />
@@ -30,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EntityConfiguration\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>

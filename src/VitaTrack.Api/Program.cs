@@ -1,11 +1,8 @@
-using VitaTrack.Application;
 using VitaTrack.Infrastructure;
-using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using FluentValidation;
 using VitaTrack.Infrastructure.Extension;
 using VitaTrack.Api.Extension;
 using VitaTrack.Api.Middlewares;
@@ -20,7 +17,6 @@ builder.Services.AddTransient<CorrelationIdMiddleware>();
 builder.Services.AddTransient<RequestLoggingMiddleware>();
 
 // Add services to the container.
-builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddServices();
 builder.Services.AddControllers();
@@ -92,7 +88,5 @@ app.UseMiddleware<RequestLoggingMiddleware>();// 10. Custom middleware
 app.UseMiddleware<CorrelationIdMiddleware>();// 10. Custom middleware
 app.MapControllers();                        // 11. Execute endpoints
 
-
-await app.InitialiseDatabaseAsync();
 
 app.Run();

@@ -12,7 +12,7 @@ public abstract class BaseEntity<TId>
     public bool IsDeleted { get; set; }
 
     [JsonIgnore]
-    public User User { get; set; }
+    public User User { get; set; } = null!; 
 }
 
 public interface IAggregateRoot { }
