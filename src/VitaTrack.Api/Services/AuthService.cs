@@ -65,6 +65,8 @@ namespace VitaTrack.Api.Services
 
             user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
 
+            await _userRepository.CreateUserAsync(user, cancellationToken);
+
             var (token, _) = CreateToken(user);
             var refreshToken = GenerateRefreshToken();
 
@@ -74,8 +76,6 @@ namespace VitaTrack.Api.Services
                 Expires = DateTime.UtcNow.AddDays(7),
                 Created = DateTime.UtcNow
             });
-
-            await _userRepository.CreateUserAsync(user, cancellationToken);
 
             return new AuthResponse(token, refreshToken, user.Id, user.Email, user.Name);
         }
