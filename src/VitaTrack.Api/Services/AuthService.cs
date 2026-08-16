@@ -65,10 +65,10 @@ namespace VitaTrack.Api.Services
 
             user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
 
+            var refreshToken = GenerateRefreshToken();
             await _userRepository.CreateUserAsync(user, cancellationToken);
 
             var (token, _) = CreateToken(user);
-            var refreshToken = GenerateRefreshToken();
 
             user.RefreshTokens.Add(new RefreshToken
             {
