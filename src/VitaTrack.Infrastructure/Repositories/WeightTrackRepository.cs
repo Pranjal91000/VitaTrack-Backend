@@ -10,13 +10,14 @@ namespace VitaTrack.Infrastructure.Repositories
 
         public async Task<bool> SaveWeightAsync(WeightTrack data)
         {
-            await _appDbContext.WeightTracks.AddAsync(data);
-
+            await _appDbContext.WeightTrackers.AddAsync(data);
             return await _appDbContext.SaveChangesAsync() > 0;
         }
         public async Task<bool> UpdateWeightAsync(WeightTrack input)
         {
-            var data = await _appDbContext.WeightTracks.Where(x => x.Id == input.Id).FirstOrDefaultAsync();
+            var data = await _appDbContext.WeightTrackers.Where(x => x.Id == input.Id).FirstOrDefaultAsync();
+            if (data == null) return false;
+
             data.Weight = input.Weight;
             data.DateRecordedOn = input.DateRecordedOn;
 
@@ -24,13 +25,21 @@ namespace VitaTrack.Infrastructure.Repositories
         }
         public async Task<bool> DeleteWeightAsync(long id)
         {
-            var data = await _appDbContext.WeightTracks.FirstOrDefaultAsync();
-            _appDbContext.WeightTracks.Remove(data);
+            var data = await _appDbContext.WeightTrackers.FirstOrDefaultAsync(x => x.Id == id);
+            if (data == null) return false;
+
+            _appDbContext.WeightTrackers.Remove(data);
             return await _appDbContext.SaveChangesAsync() > 0;
         }
         public async Task<GetWeightByDate> GetWeightById(long? id)
         {
-            var data = await _appDbContext.WeightTracks.Where(x => id == null ||  x.Id == id).OrderByDescending(x => x.DateRecordedOn).FirstOrDefaultAsync();
+            var data = await _appDbContext.WeightTrackers
+                .Where(x => id == null || x.Id == id)
+                .OrderByDescending(x => x.DateRecordedOn)
+                .FirstOrDefaultAsync();
+
+            if (data == null) return null!;
+
             return new GetWeightByDate
             {
                 RecordedOn = data.DateRecordedOn,
@@ -39,7 +48,7 @@ namespace VitaTrack.Infrastructure.Repositories
         }
         public async Task<List<GetWeightByDate>> GetWeightHistory()
         {
-            var data = await _appDbContext.WeightTracks.Select(x => new GetWeightByDate
+            var data = await _appDbContext.WeightTrackers.Select(x => new GetWeightByDate
             {
                RecordedOn = x.DateRecordedOn,
                Weight =  x.Weight
