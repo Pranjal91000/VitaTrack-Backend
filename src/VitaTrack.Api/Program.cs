@@ -1,17 +1,13 @@
-using VitaTrack.Application;
 using VitaTrack.Infrastructure;
-using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using FluentValidation;
 using VitaTrack.Infrastructure.Extension;
 using VitaTrack.Api.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddServices();
 builder.Services.AddControllers();
@@ -58,7 +54,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-await app.InitialiseDatabaseAsync();
 
 app.Run();
