@@ -5,7 +5,7 @@ using VitaTrack.Api.Models.WeightTracker;
 namespace VitaTrack.Api.Controllers
 {
     [ApiController]
-    [Route("api/weight-tracking")]
+    [Route("api/weight-tracker")]
     public class WeightTrackerController(IWeightTrackerService service) : ControllerBase
     {
         private readonly IWeightTrackerService _weightTrackerService = service;
@@ -20,6 +20,12 @@ namespace VitaTrack.Api.Controllers
         public async Task<ActionResult<bool>> UpdateWeightAsync(WeightTrackerUpdateInputModel input)
         {
             return await _weightTrackerService.UpdateWeightAsync(input);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> DeleteWeightAsync([FromRoute] long id)
+        {
+            return await _weightTrackerService.DeleteWeightTrackedAsync(id);
         }
 
         [HttpGet]

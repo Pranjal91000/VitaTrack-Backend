@@ -5,9 +5,10 @@ using VitaTrack.Core.Entities;
 
 namespace VitaTrack.Api.Services
 {
-    public class FoodService(IFoodRepository foodRepository) : IFoodService
+    public class FoodService(IFoodRepository foodRepository, IJwtHelperService jwtHelperService) : IFoodService
     {
         private readonly IFoodRepository _foodRepository = foodRepository;
+        private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
         public async Task<List<FoodDto>> SearchFoodsAsync(string search, int limit, CancellationToken cancellationToken = default)
         {
@@ -24,8 +25,9 @@ namespace VitaTrack.Api.Services
             )).ToList();
         }
 
-        public async Task<FoodDto> CreateFoodAsync(long? userId, CreateFoodRequest request, CancellationToken cancellationToken = default)
+        public async Task<FoodDto> CreateFoodAsync(CreateFoodRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var food = new Food
             {
                 UserId = userId,
@@ -51,8 +53,9 @@ namespace VitaTrack.Api.Services
             );
         }
 
-        public async Task<(FoodDto? Food, string? Error)> UpdateFoodAsync(long id, long userId, UpdateFoodRequest request, CancellationToken cancellationToken = default)
+        public async Task<(FoodDto? Food, string? Error)> UpdateFoodAsync(long id, UpdateFoodRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var food = await _foodRepository.GetByIdAsync(id, cancellationToken);
             if (food == null) return (null, "NotFound");
             if (food.UserId != userId) return (null, "Forbid");
@@ -81,8 +84,9 @@ namespace VitaTrack.Api.Services
             return (result, null);
         }
 
-        public async Task<(bool Success, string? Error)> DeleteFoodAsync(long id, long userId, CancellationToken cancellationToken = default)
+        public async Task<(bool Success, string? Error)> DeleteFoodAsync(long id, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var food = await _foodRepository.GetByIdAsync(id, cancellationToken);
             if (food == null) return (false, "NotFound");
             if (food.UserId != userId) return (false, "Forbid");

@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VitaTrack.Api.Abstractions;
@@ -16,22 +15,14 @@ public class MealSlotsController(IMealSlotService mealSlotService) : ControllerB
     [HttpGet]
     public async Task<ActionResult<List<MealSlotDto>>> GetSlots(CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var slots = await _mealSlotService.GetSlotsAsync(userId, cancellationToken);
+        var slots = await _mealSlotService.GetSlotsAsync(cancellationToken);
         return Ok(slots);
     }
 
     [HttpPost]
     public async Task<ActionResult<MealSlotDto>> CreateSlot([FromBody] CreateMealSlotRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var dto = await _mealSlotService.CreateSlotAsync(userId, request, cancellationToken);
+        var dto = await _mealSlotService.CreateSlotAsync(request, cancellationToken);
         return Ok(dto);
     }
 }

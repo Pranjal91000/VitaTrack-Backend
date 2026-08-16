@@ -47,6 +47,7 @@ namespace VitaTrack.Infrastructure.Repositories
 
             return new GetWeightByDate
             {
+                Id = data.Id,
                 RecordedOn = data.DateRecordedOn,
                 Weight = data.Weight
             };
@@ -56,6 +57,7 @@ namespace VitaTrack.Infrastructure.Repositories
         {
             var data = await _appDbContext.WeightTrackers.Select(x => new GetWeightByDate
             {
+                Id = x.Id,
                 RecordedOn = x.DateRecordedOn,
                 Weight = x.Weight
             }).ToListAsync();

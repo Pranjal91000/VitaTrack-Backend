@@ -42,6 +42,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IJwtHelperServ
                     break;
                 case EntityState.Added:
                     entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Entity.UserId = _jwtHelperService.GetUserId();
                     break;
             }
         }

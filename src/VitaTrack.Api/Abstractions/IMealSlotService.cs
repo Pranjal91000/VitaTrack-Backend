@@ -4,7 +4,7 @@ namespace VitaTrack.Api.Abstractions
 {
     public interface IMealSlotService
     {
-        Task<List<MealSlotDto>> GetSlotsAsync(long userId, CancellationToken cancellationToken = default);
-        Task<MealSlotDto> CreateSlotAsync(long userId, CreateMealSlotRequest request, CancellationToken cancellationToken = default);
+        Task<List<MealSlotDto>> GetSlotsAsync(CancellationToken cancellationToken = default);
+        Task<MealSlotDto> CreateSlotAsync(CreateMealSlotRequest request, CancellationToken cancellationToken = default);
     }
 }

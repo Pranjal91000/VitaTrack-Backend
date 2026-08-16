@@ -5,17 +5,19 @@ using VitaTrack.Core.Abstraction;
 
 namespace VitaTrack.Api.Services
 {
-    public class ReportService(IReportRepository reportRepository) : IReportService
+    public class ReportService(IReportRepository reportRepository, IJwtHelperService jwtHelperService) : IReportService
     {
         private readonly IReportRepository _reportRepository = reportRepository;
+        private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
-        public async Task<(NutritionReportDto? Report, string? Error)> GetNutritionReportAsync(long userId, string from, string to, CancellationToken cancellationToken = default)
+        public async Task<(NutritionReportDto? Report, string? Error)> GetNutritionReportAsync(string from, string to, CancellationToken cancellationToken = default)
         {
             if (!DateOnly.TryParse(from, out var fromDate) || !DateOnly.TryParse(to, out var toDate))
                 return (null, "InvalidDateFormat");
             if (toDate < fromDate)
                 return (null, "InvalidDateRange");
 
+            var userId = _jwtHelperService.GetUserId();
             var meals = await _reportRepository.GetMealsForReportAsync(userId, fromDate, toDate, cancellationToken);
 
             var groupedByDate = meals
@@ -58,13 +60,14 @@ namespace VitaTrack.Api.Services
             return (new NutritionReportDto(fromDate, toDate, groupedByDate, slotAggregates, avgProteinPct), null);
         }
 
-        public async Task<(WorkoutReportDto? Report, string? Error)> GetWorkoutReportAsync(long userId, string from, string to, CancellationToken cancellationToken = default)
+        public async Task<(WorkoutReportDto? Report, string? Error)> GetWorkoutReportAsync(string from, string to, CancellationToken cancellationToken = default)
         {
             if (!DateOnly.TryParse(from, out var fromDate) || !DateOnly.TryParse(to, out var toDate))
                 return (null, "InvalidDateFormat");
             if (toDate < fromDate)
                 return (null, "InvalidDateRange");
 
+            var userId = _jwtHelperService.GetUserId();
             var workouts = await _reportRepository.GetWorkoutsForReportAsync(userId, fromDate, toDate, cancellationToken);
 
             var allExerciseRows = workouts.SelectMany(w => w.Exercises).ToList();
@@ -86,7 +89,7 @@ namespace VitaTrack.Api.Services
             return (new WorkoutReportDto(fromDate, toDate, grouped, workouts.Count, totalDurationMinutes, totalDistanceKm), null);
         }
 
-        public async Task<(ExerciseMonthlyReportDto? Report, string? Error)> GetExerciseMonthlyReportAsync(long userId, long exerciseId, string month, CancellationToken cancellationToken = default)
+        public async Task<(ExerciseMonthlyReportDto? Report, string? Error)> GetExerciseMonthlyReportAsync(long exerciseId, string month, CancellationToken cancellationToken = default)
         {
             if (!DateTime.TryParse($"{month}-01", out var startOfMonth))
                 return (null, "InvalidMonthFormat");
@@ -95,6 +98,7 @@ namespace VitaTrack.Api.Services
             var rangeFrom = DateOnly.FromDateTime(startOfMonth);
             var rangeTo = DateOnly.FromDateTime(endOfMonth);
 
+            var userId = _jwtHelperService.GetUserId();
             var workouts = await _reportRepository.GetWorkoutsForExerciseMonthlyReportAsync(userId, exerciseId, rangeFrom, rangeTo, cancellationToken);
             var exercise = await _reportRepository.GetExerciseByIdAsync(exerciseId, cancellationToken);
             if (exercise == null) return (null, "NotFound");

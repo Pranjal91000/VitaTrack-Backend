@@ -4,6 +4,6 @@ namespace VitaTrack.Api.Abstractions
 {
     public interface IDashboardService
     {
-        Task<DashboardDailyDto> GetDailyDashboardAsync(long userId, string dateString, CancellationToken cancellationToken = default);
+        Task<DashboardDailyDto> GetDailyDashboardAsync(string dateString, CancellationToken cancellationToken = default);
     }
 }

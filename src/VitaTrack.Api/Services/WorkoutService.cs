@@ -5,15 +5,17 @@ using VitaTrack.Core.Entities;
 
 namespace VitaTrack.Api.Services
 {
-    public class WorkoutService(IWorkoutRepository workoutRepository) : IWorkoutService
+    public class WorkoutService(IWorkoutRepository workoutRepository, IJwtHelperService jwtHelperService) : IWorkoutService
     {
         private readonly IWorkoutRepository _workoutRepository = workoutRepository;
+        private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
-        public async Task<DailyWorkoutsDto?> GetWorkoutsAsync(long userId, string dateString, CancellationToken cancellationToken = default)
+        public async Task<DailyWorkoutsDto?> GetWorkoutsAsync(string dateString, CancellationToken cancellationToken = default)
         {
             if (!DateOnly.TryParse(dateString, out var parsedDate))
                 return null;
 
+            var userId = _jwtHelperService.GetUserId();
             var workouts = await _workoutRepository.GetWorkoutsByDateAsync(userId, parsedDate, cancellationToken);
 
             var dtos = workouts.Select(w =>
@@ -40,8 +42,9 @@ namespace VitaTrack.Api.Services
             return new DailyWorkoutsDto(dtos);
         }
 
-        public async Task<WorkoutDto> CreateWorkoutAsync(long userId, CreateWorkoutRequest request, CancellationToken cancellationToken = default)
+        public async Task<WorkoutDto> CreateWorkoutAsync(CreateWorkoutRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var workout = new Workout
             {
                 UserId = userId,
@@ -103,8 +106,9 @@ namespace VitaTrack.Api.Services
             return new WorkoutDto(created.Id, created.Name, created.Date, created.DurationMinutes, dtos, volume, created.RecurrencePattern, created.IsTemplate);
         }
 
-        public async Task<(WorkoutDto? Workout, string? Error)> AppendExercisesAsync(long id, long userId, AppendExercisesRequest request, CancellationToken cancellationToken = default)
+        public async Task<(WorkoutDto? Workout, string? Error)> AppendExercisesAsync(long id, AppendExercisesRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var workout = await _workoutRepository.GetWorkoutWithDetailsAsync(id, userId, cancellationToken);
             if (workout == null) return (null, "NotFound");
 
@@ -159,8 +163,9 @@ namespace VitaTrack.Api.Services
             return (new WorkoutDto(workout.Id, workout.Name, workout.Date, workout.DurationMinutes, dtos, volume, workout.RecurrencePattern, workout.IsTemplate), null);
         }
 
-        public async Task<(WorkoutDto? Workout, string? Error)> UpdateWorkoutAsync(long id, long userId, CreateWorkoutRequest request, CancellationToken cancellationToken = default)
+        public async Task<(WorkoutDto? Workout, string? Error)> UpdateWorkoutAsync(long id, CreateWorkoutRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var workout = await _workoutRepository.GetWorkoutWithDetailsAsync(id, userId, cancellationToken);
             if (workout == null) return (null, "NotFound");
 
@@ -226,8 +231,9 @@ namespace VitaTrack.Api.Services
             return (new WorkoutDto(workout.Id, workout.Name, workout.Date, workout.DurationMinutes, dtos, volume, workout.RecurrencePattern, workout.IsTemplate), null);
         }
 
-        public async Task<(bool Success, string? Error)> DeleteWorkoutAsync(long id, long userId, CancellationToken cancellationToken = default)
+        public async Task<(bool Success, string? Error)> DeleteWorkoutAsync(long id, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var workout = await _workoutRepository.GetByIdAsync(id, cancellationToken);
             if (workout == null) return (false, "NotFound");
             if (workout.UserId != userId) return (false, "Forbid");
@@ -236,13 +242,14 @@ namespace VitaTrack.Api.Services
             return (true, null);
         }
 
-        public async Task<(IReadOnlyList<WorkoutHeatmapDayDto>? Heatmap, string? Error)> GetWorkoutHeatmapAsync(long userId, string from, string to, CancellationToken cancellationToken = default)
+        public async Task<(IReadOnlyList<WorkoutHeatmapDayDto>? Heatmap, string? Error)> GetWorkoutHeatmapAsync(string from, string to, CancellationToken cancellationToken = default)
         {
             if (!DateOnly.TryParse(from, out var fromDate) || !DateOnly.TryParse(to, out var toDate))
                 return (null, "InvalidDateFormat");
             if (fromDate > toDate)
                 return (null, "InvalidDateRange");
 
+            var userId = _jwtHelperService.GetUserId();
             var data = await _workoutRepository.GetHeatmapDataAsync(userId, fromDate, toDate, cancellationToken);
             var rows = data
                 .OrderBy(x => x.Date)

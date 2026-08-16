@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VitaTrack.Api.Abstractions;
@@ -25,22 +24,14 @@ public class ExercisesController(IExerciseService exerciseService, IWebHostEnvir
     [HttpPost]
     public async Task<ActionResult<ExerciseDto>> CreateExercise([FromBody] CreateExerciseRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var dto = await _exerciseService.CreateExerciseAsync(userId, request, cancellationToken);
+        var dto = await _exerciseService.CreateExerciseAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetExercises), new { id = dto.Id }, dto);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult<ExerciseDto>> UpdateExercise(long id, [FromBody] UpdateExerciseRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (dto, error) = await _exerciseService.UpdateExerciseAsync(id, userId, request, cancellationToken);
+        var (dto, error) = await _exerciseService.UpdateExerciseAsync(id, request, cancellationToken);
         if (error == "NotFound") return NotFound("Exercise not found");
         if (error == "Forbid") return Forbid();
 
@@ -50,11 +41,7 @@ public class ExercisesController(IExerciseService exerciseService, IWebHostEnvir
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteExercise(long id, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (success, error) = await _exerciseService.DeleteExerciseAsync(id, userId, _env.ContentRootPath, cancellationToken);
+        var (success, error) = await _exerciseService.DeleteExerciseAsync(id, _env.ContentRootPath, cancellationToken);
         if (error == "NotFound") return NotFound("Exercise not found");
         if (error == "Forbid") return Forbid();
 
@@ -66,11 +53,7 @@ public class ExercisesController(IExerciseService exerciseService, IWebHostEnvir
     [RequestFormLimits(MultipartBodyLengthLimit = 100_000_000)]
     public async Task<ActionResult<ExerciseDto>> UploadDemoMedia(long id, IFormFile file, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (dto, error) = await _exerciseService.UploadDemoMediaAsync(id, userId, file, _env.ContentRootPath, cancellationToken);
+        var (dto, error) = await _exerciseService.UploadDemoMediaAsync(id, file, _env.ContentRootPath, cancellationToken);
         if (error == "FileRequired") return BadRequest("File required");
         if (error == "InvalidFileType") return BadRequest("Allowed types: video/mp4, video/webm, video/quicktime");
         if (error == "NotFound") return NotFound("Exercise not found");
@@ -82,11 +65,7 @@ public class ExercisesController(IExerciseService exerciseService, IWebHostEnvir
     [HttpGet("{id}/demo-media")]
     public async Task<IActionResult> GetDemoMedia(long id, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (path, contentType, error) = await _exerciseService.GetDemoMediaAsync(id, userId, _env.ContentRootPath, cancellationToken);
+        var (path, contentType, error) = await _exerciseService.GetDemoMediaAsync(id, _env.ContentRootPath, cancellationToken);
         if (error != null) return NotFound();
 
         var stream = System.IO.File.OpenRead(path!);
@@ -96,11 +75,7 @@ public class ExercisesController(IExerciseService exerciseService, IWebHostEnvir
     [HttpDelete("{id}/demo-media")]
     public async Task<ActionResult<ExerciseDto>> DeleteDemoMedia(long id, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (dto, error) = await _exerciseService.DeleteDemoMediaAsync(id, userId, _env.ContentRootPath, cancellationToken);
+        var (dto, error) = await _exerciseService.DeleteDemoMediaAsync(id, _env.ContentRootPath, cancellationToken);
         if (error == "NotFound") return NotFound("Exercise not found");
         if (error == "Forbid") return Forbid();
 

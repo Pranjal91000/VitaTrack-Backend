@@ -7,7 +7,7 @@ using VitaTrack.Core.Entities;
 
 namespace VitaTrack.Api.Services
 {
-    public class ExerciseService(IExerciseRepository exerciseRepository) : IExerciseService
+    public class ExerciseService(IExerciseRepository exerciseRepository, IJwtHelperService jwtHelperService) : IExerciseService
     {
         private static readonly HashSet<string> AllowedVideoContentTypes = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -15,6 +15,7 @@ namespace VitaTrack.Api.Services
         };
 
         private readonly IExerciseRepository _exerciseRepository = exerciseRepository;
+        private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
         private static string ExtensionForMime(string? mime) => mime?.ToLowerInvariant() switch
         {
@@ -42,8 +43,9 @@ namespace VitaTrack.Api.Services
             return new ApiResponse<List<ExerciseDto>>(paginatedList.Items, ResponseMeta.FromPagination(paginatedList));
         }
 
-        public async Task<ExerciseDto> CreateExerciseAsync(long userId, CreateExerciseRequest request, CancellationToken cancellationToken = default)
+        public async Task<ExerciseDto> CreateExerciseAsync(CreateExerciseRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var exercise = new Exercise
             {
                 UserId = userId,
@@ -58,8 +60,9 @@ namespace VitaTrack.Api.Services
             return ToDto(created);
         }
 
-        public async Task<(ExerciseDto? Exercise, string? Error)> UpdateExerciseAsync(long id, long userId, UpdateExerciseRequest request, CancellationToken cancellationToken = default)
+        public async Task<(ExerciseDto? Exercise, string? Error)> UpdateExerciseAsync(long id, UpdateExerciseRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var exercise = await _exerciseRepository.GetByIdAsync(id, cancellationToken);
             if (exercise == null) return (null, "NotFound");
             if (exercise.UserId != userId) return (null, "Forbid");
@@ -73,8 +76,9 @@ namespace VitaTrack.Api.Services
             return (ToDto(exercise), null);
         }
 
-        public async Task<(bool Success, string? Error)> DeleteExerciseAsync(long id, long userId, string contentRootPath, CancellationToken cancellationToken = default)
+        public async Task<(bool Success, string? Error)> DeleteExerciseAsync(long id, string contentRootPath, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var exercise = await _exerciseRepository.GetByIdAsync(id, cancellationToken);
             if (exercise == null) return (false, "NotFound");
             if (exercise.UserId != userId) return (false, "Forbid");
@@ -88,7 +92,7 @@ namespace VitaTrack.Api.Services
             return (true, null);
         }
 
-        public async Task<(ExerciseDto? Exercise, string? Error)> UploadDemoMediaAsync(long id, long userId, IFormFile file, string contentRootPath, CancellationToken cancellationToken = default)
+        public async Task<(ExerciseDto? Exercise, string? Error)> UploadDemoMediaAsync(long id, IFormFile file, string contentRootPath, CancellationToken cancellationToken = default)
         {
             if (file == null || file.Length == 0)
                 return (null, "FileRequired");
@@ -97,6 +101,7 @@ namespace VitaTrack.Api.Services
             if (string.IsNullOrEmpty(contentType) || !AllowedVideoContentTypes.Contains(contentType))
                 return (null, "InvalidFileType");
 
+            var userId = _jwtHelperService.GetUserId();
             var exercise = await _exerciseRepository.GetByIdAsync(id, cancellationToken);
             if (exercise == null) return (null, "NotFound");
             if (exercise.UserId != userId) return (null, "Forbid");
@@ -122,8 +127,9 @@ namespace VitaTrack.Api.Services
             return (ToDto(exercise), null);
         }
 
-        public async Task<(string? PhysicalPath, string? ContentType, string? Error)> GetDemoMediaAsync(long id, long userId, string contentRootPath, CancellationToken cancellationToken = default)
+        public async Task<(string? PhysicalPath, string? ContentType, string? Error)> GetDemoMediaAsync(long id, string contentRootPath, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var exercise = await _exerciseRepository.GetByIdAsync(id, cancellationToken);
             if (exercise == null) return (null, null, "NotFound");
             if (exercise.UserId != userId) return (null, null, "Forbid");
@@ -138,8 +144,9 @@ namespace VitaTrack.Api.Services
             return (path, exercise.DemoMediaContentType, null);
         }
 
-        public async Task<(ExerciseDto? Exercise, string? Error)> DeleteDemoMediaAsync(long id, long userId, string contentRootPath, CancellationToken cancellationToken = default)
+        public async Task<(ExerciseDto? Exercise, string? Error)> DeleteDemoMediaAsync(long id, string contentRootPath, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var exercise = await _exerciseRepository.GetByIdAsync(id, cancellationToken);
             if (exercise == null) return (null, "NotFound");
             if (exercise.UserId != userId) return (null, "Forbid");

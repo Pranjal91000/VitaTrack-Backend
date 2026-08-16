@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VitaTrack.Api.Abstractions;
@@ -16,11 +15,7 @@ public class WorkoutsController(IWorkoutService workoutService) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<DailyWorkoutsDto>> GetWorkouts([FromQuery] string date, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var result = await _workoutService.GetWorkoutsAsync(userId, date, cancellationToken);
+        var result = await _workoutService.GetWorkoutsAsync(date, cancellationToken);
         if (result == null) return BadRequest("Invalid date format (yyyy-MM-dd)");
 
         return Ok(result);
@@ -29,22 +24,14 @@ public class WorkoutsController(IWorkoutService workoutService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<WorkoutDto>> CreateWorkout([FromBody] CreateWorkoutRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var result = await _workoutService.CreateWorkoutAsync(userId, request, cancellationToken);
+        var result = await _workoutService.CreateWorkoutAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetWorkouts), new { date = result.Date.ToString("yyyy-MM-dd") }, result);
     }
 
     [HttpPost("{id}/exercises")]
     public async Task<ActionResult<WorkoutDto>> AppendExercises(long id, [FromBody] AppendExercisesRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (result, error) = await _workoutService.AppendExercisesAsync(id, userId, request, cancellationToken);
+        var (result, error) = await _workoutService.AppendExercisesAsync(id, request, cancellationToken);
         if (error == "NotFound") return NotFound("Workout not found");
 
         return Ok(result);
@@ -53,11 +40,7 @@ public class WorkoutsController(IWorkoutService workoutService) : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<WorkoutDto>> UpdateWorkout(long id, [FromBody] CreateWorkoutRequest request, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (result, error) = await _workoutService.UpdateWorkoutAsync(id, userId, request, cancellationToken);
+        var (result, error) = await _workoutService.UpdateWorkoutAsync(id, request, cancellationToken);
         if (error == "NotFound") return NotFound("Workout not found");
 
         return Ok(result);
@@ -66,11 +49,7 @@ public class WorkoutsController(IWorkoutService workoutService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteWorkout(long id, CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (success, error) = await _workoutService.DeleteWorkoutAsync(id, userId, cancellationToken);
+        var (success, error) = await _workoutService.DeleteWorkoutAsync(id, cancellationToken);
         if (error == "NotFound") return NotFound("Workout not found");
         if (error == "Forbid") return Forbid();
 
@@ -83,11 +62,7 @@ public class WorkoutsController(IWorkoutService workoutService) : ControllerBase
         [FromQuery] string to,
         CancellationToken cancellationToken)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdString == null) return Unauthorized();
-        var userId = long.Parse(userIdString);
-
-        var (rows, error) = await _workoutService.GetWorkoutHeatmapAsync(userId, from, to, cancellationToken);
+        var (rows, error) = await _workoutService.GetWorkoutHeatmapAsync(from, to, cancellationToken);
         if (error == "InvalidDateFormat") return BadRequest("Invalid date format (yyyy-MM-dd)");
         if (error == "InvalidDateRange") return BadRequest("'from' must be on or before 'to'");
 

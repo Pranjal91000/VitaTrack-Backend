@@ -4,12 +4,14 @@ using VitaTrack.Core.Abstraction;
 
 namespace VitaTrack.Api.Services
 {
-    public class UserService(IUserRepository userRepository) : IUserService
+    public class UserService(IUserRepository userRepository, IJwtHelperService jwtHelperService) : IUserService
     {
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly IJwtHelperService _jwtHelperService = jwtHelperService;
 
-        public async Task<UserProfileDto?> GetProfileAsync(long userId, CancellationToken cancellationToken = default)
+        public async Task<UserProfileDto?> GetProfileAsync(CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
             if (user == null) return null;
 
@@ -24,8 +26,9 @@ namespace VitaTrack.Api.Services
             );
         }
 
-        public async Task<UserProfileDto?> UpdateProfileAsync(long userId, UpdateProfileRequest request, CancellationToken cancellationToken = default)
+        public async Task<UserProfileDto?> UpdateProfileAsync(UpdateProfileRequest request, CancellationToken cancellationToken = default)
         {
+            var userId = _jwtHelperService.GetUserId();
             var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
             if (user == null) return null;
 
